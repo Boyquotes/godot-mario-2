@@ -1,0 +1,116 @@
+[gd_scene load_steps=7 format=1]
+
+[ext_resource path="res://tileset.tres" type="TileSet" id=1]
+[ext_resource path="res://mario.1.png" type="Texture" id=2]
+[ext_resource path="res://background.jpg" type="Texture" id=3]
+
+[sub_resource type="CanvasItemMaterial" id=1]
+
+shader/shading_mode = 0
+
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 600.016, 27.4642 )
+
+[sub_resource type="RectangleShape2D" id=3]
+
+custom_solver_bias = 0.0
+extents = Vector2( 78.4832, 28.7661 )
+
+[node name="world" type="Node2D"]
+
+material/material = SubResource( 1 )
+transform/pos = Vector2( 60, 209 )
+transform/rot = 0.1
+
+[node name="TileMap" type="TileMap" parent="."]
+
+transform/pos = Vector2( -51.9651, -20.0907 )
+transform/rot = -7.09635e-10
+mode = 0
+tile_set = ExtResource( 1 )
+cell/size = Vector2( 64, 64 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = true
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray( 131080, 1, 131081, 1, 131082, 1, 131083, 1, 131084, 1, 131085, 1 )
+
+[node name="KinematicBody2D" type="KinematicBody2D" parent="TileMap"]
+
+transform/pos = Vector2( 299.935, 37.5235 )
+transform/rot = -7.09635e-10
+input/pickable = false
+shapes/0/shape = SubResource( 2 )
+shapes/0/transform = Matrix32( 1.00058, 0, 0, 1.1888, 279.101, 291.459 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+collision/margin = 0.08
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/KinematicBody2D"]
+
+transform/pos = Vector2( 279.101, 291.459 )
+transform/scale = Vector2( 1.00058, 1.1888 )
+shape = SubResource( 2 )
+trigger = false
+_update_shape_index = 0
+
+[node name="RigidBody2D" type="RigidBody2D" parent="TileMap"]
+
+transform/rot = -7.09635e-10
+input/pickable = false
+shapes/0/shape = SubResource( 3 )
+shapes/0/transform = Matrix32( 0.379158, 0, 0, 0.912507, 173.773, 161.603 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+mode = 0
+mass = 1.0
+friction = 1.0
+bounce = 0.0
+gravity_scale = 1.0
+custom_integrator = false
+continuous_cd = 0
+contacts_reported = 0
+contact_monitor = false
+sleeping = false
+can_sleep = true
+velocity/linear = Vector2( 0, 0 )
+velocity/angular = 0.0
+damp_override/linear = -1.0
+damp_override/angular = -1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/RigidBody2D"]
+
+transform/pos = Vector2( 173.773, 161.603 )
+transform/scale = Vector2( 0.379158, 0.912507 )
+shape = SubResource( 3 )
+trigger = false
+_update_shape_index = 0
+
+[node name="Sprite" type="Sprite" parent="TileMap/RigidBody2D/CollisionShape2D"]
+
+transform/pos = Vector2( -0.388229, -1.67131 )
+transform/rot = -7.09635e-10
+transform/scale = Vector2( 2.48067, 1.07967 )
+z/z = 1
+texture = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+transform/pos = Vector2( 451.374, 71.0227 )
+transform/rot = 2.37977e-09
+transform/scale = Vector2( 2.91984, 2.76263 )
+z/z = -1
+texture = ExtResource( 3 )
+
+
