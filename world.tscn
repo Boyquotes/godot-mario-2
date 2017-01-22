@@ -1,12 +1,21 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=14 format=1]
 
 [ext_resource path="res://tileset.tres" type="TileSet" id=1]
-[ext_resource path="res://mario.1.png" type="Texture" id=2]
-[ext_resource path="res://background.jpg" type="Texture" id=3]
+[ext_resource path="res://background.jpg" type="Texture" id=2]
+[ext_resource path="res://mario.4.png" type="Texture" id=3]
+[ext_resource path="res://mario.2.png" type="Texture" id=4]
+[ext_resource path="res://mario.3.png" type="Texture" id=5]
+[ext_resource path="res://mario.1.png" type="Texture" id=6]
+[ext_resource path="res://mario.6.png" type="Texture" id=7]
+[ext_resource path="res://mario.5.png" type="Texture" id=8]
 
 [sub_resource type="CanvasItemMaterial" id=1]
 
 shader/shading_mode = 0
+
+[sub_resource type="GDScript" id=5]
+
+script/source = "extends Node2D\nvar direction = 0\nfunc _ready():\n\t\n\tget_node(\"player/playerCollision/playerAnim\").play(\"rightWalk\")\n\tset_process(true)\n\tpass\n\t\nfunc _process(delta):\n\tvar position = get_node(\"player\").get_pos()\n\t\n\tif Input.is_action_pressed(\"ui_left\"):\n\t\tdirection -= .1;\n\tif Input.is_action_pressed(\"ui_right\"):\n\t\tdirection += .1\n\t\n\n\tif direction < 1:\n\t\tget_node(\"player/playerCollision/playerAnim\").play(\"leftWalk\")\n\tif direction > 1:\n\t\tget_node(\"player/playerCollision/playerAnim\").play(\"rightWalk\")\n\tif direction < 1 and direction >= 0:\n\t\tget_node(\"player/playerCollision/playerAnim\").play(\"right\")\n\tif direction > -1 and direction <= 0:\n\t\tget_node(\"player/playerCollision/playerAnim\").play(\"left\")\n\tif direction > 1:\n\t\tposition.x += direction\n\t\tget_node(\"player\").set_pos(position)\n\tif direction < -1:\n\t\tposition.x += direction\n\t\tget_node(\"player\").set_pos(position)\n\tif direction > 5:\n\t\tdirection = 5\n\tif direction < -5:\n\t\tdirection = -5\n\t"
 
 [sub_resource type="RectangleShape2D" id=2]
 
@@ -18,13 +27,18 @@ extents = Vector2( 600.016, 27.4642 )
 custom_solver_bias = 0.0
 extents = Vector2( 78.4832, 28.7661 )
 
+[sub_resource type="SpriteFrames" id=4]
+
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"left", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"right", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ) ], "loop":true, "name":"rightWalk", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 7 ), ExtResource( 8 ) ], "loop":true, "name":"leftWalk", "speed":5.0 } ]
+
 [node name="world" type="Node2D"]
 
 material/material = SubResource( 1 )
 transform/pos = Vector2( 60, 209 )
 transform/rot = 0.1
+script/script = SubResource( 5 )
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="cubes" type="TileMap" parent="."]
 
 transform/pos = Vector2( -51.9651, -20.0907 )
 transform/rot = -7.09635e-10
@@ -44,9 +58,17 @@ collision/mask = 1
 occluder/light_mask = 1
 tile_data = IntArray( 131080, 1, 131081, 1, 131082, 1, 131083, 1, 131084, 1, 131085, 1 )
 
-[node name="KinematicBody2D" type="KinematicBody2D" parent="TileMap"]
+[node name="background" type="Sprite" parent="."]
 
-transform/pos = Vector2( 299.935, 37.5235 )
+transform/pos = Vector2( 451.344, 88.0227 )
+transform/rot = 2.37977e-09
+transform/scale = Vector2( 2.91984, 2.76263 )
+z/z = -1
+texture = ExtResource( 2 )
+
+[node name="ground" type="KinematicBody2D" parent="."]
+
+transform/pos = Vector2( 247.97, 17.4328 )
 transform/rot = -7.09635e-10
 input/pickable = false
 shapes/0/shape = SubResource( 2 )
@@ -56,7 +78,7 @@ collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/KinematicBody2D"]
+[node name="groundCollision" type="CollisionShape2D" parent="ground"]
 
 transform/pos = Vector2( 279.101, 291.459 )
 transform/scale = Vector2( 1.00058, 1.1888 )
@@ -64,8 +86,9 @@ shape = SubResource( 2 )
 trigger = false
 _update_shape_index = 0
 
-[node name="RigidBody2D" type="RigidBody2D" parent="TileMap"]
+[node name="player" type="RigidBody2D" parent="."]
 
+transform/pos = Vector2( 45.8566, 82.0803 )
 transform/rot = -7.09635e-10
 input/pickable = false
 shapes/0/shape = SubResource( 3 )
@@ -73,7 +96,8 @@ shapes/0/transform = Matrix32( 0.379158, 0, 0, 0.912507, 173.773, 161.603 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
-mode = 0
+one_way_collision/direction = Vector2( 1, 0 )
+mode = 1
 mass = 1.0
 friction = 1.0
 bounce = 0.0
@@ -89,7 +113,7 @@ velocity/angular = 0.0
 damp_override/linear = -1.0
 damp_override/angular = -1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/RigidBody2D"]
+[node name="playerCollision" type="CollisionShape2D" parent="player"]
 
 transform/pos = Vector2( 173.773, 161.603 )
 transform/scale = Vector2( 0.379158, 0.912507 )
@@ -97,20 +121,12 @@ shape = SubResource( 3 )
 trigger = false
 _update_shape_index = 0
 
-[node name="Sprite" type="Sprite" parent="TileMap/RigidBody2D/CollisionShape2D"]
+[node name="playerAnim" type="AnimatedSprite" parent="player/playerCollision"]
 
-transform/pos = Vector2( -0.388229, -1.67131 )
-transform/rot = -7.09635e-10
-transform/scale = Vector2( 2.48067, 1.07967 )
-z/z = 1
-texture = ExtResource( 2 )
-
-[node name="Sprite" type="Sprite" parent="."]
-
-transform/pos = Vector2( 451.374, 71.0227 )
-transform/rot = 2.37977e-09
-transform/scale = Vector2( 2.91984, 2.76263 )
-z/z = -1
-texture = ExtResource( 3 )
+transform/pos = Vector2( 5.05026, 1.96852 )
+transform/scale = Vector2( 2.63515, 1.06152 )
+frames = SubResource( 4 )
+animation = "right"
+playing = true
 
 
